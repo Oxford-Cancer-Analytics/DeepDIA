@@ -5,18 +5,46 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: predict_rt.py",
+            "type": "python",
+            "request": "launch",
+            "program": "src/predict_ir.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--in",
+                "data/peptide/Pan_human.peptide.csv",
+                "--model",
+                "data/models/irt/epoch_082.hdf5",
+                "--out",
+                "data/Pan_human.prediction.irt.csv"
+            ]
+        },
+        {
+            "name": "Python: predict_ms2.py",
+            "type": "python",
+            "request": "launch",
+            "program": "src/predict_ms2.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--in",
+                "data/peptides/Pan_human_charge2.peptide.csv",
+                "--model",
+                "data/models/charge2/epoch_035.hdf5",
+                "--charge",
+                "2",
+                "--out",
+                "data/Pan_human_charge2.prediction.ions.json"
+            ]
+        },
+        {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": [
-                "in", "data/peptide/Pan_human_charge2.peptide.csv",
-                "model", "data/models/charge2/epoch_035.hdf5",
-                "charge", "2",
-                "out", "data/Pan_human_charge2.prediction.ions.json"
-            ]
         }
     ]
 }
