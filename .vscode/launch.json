@@ -10,7 +10,13 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "justMyCode": true
+            "justMyCode": true,
+            "args": [
+                "in", "data/peptide/Pan_human_charge2.peptide.csv",
+                "model", "data/models/charge2/epoch_035.hdf5",
+                "charge", "2",
+                "out", "data/Pan_human_charge2.prediction.ions.json"
+            ]
         }
     ]
 }
