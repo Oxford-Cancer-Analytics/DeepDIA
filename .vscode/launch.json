@@ -29,7 +29,7 @@
             "justMyCode": true,
             "args": [
                 "--in",
-                "data/peptides/Pan_human_charge2_truncated.peptides.csv",
+                "data/peptides/Pan_human_charge2_truncated.peptides.csv", // "data/ground_truth.ions.json",
                 "--model",
                 "data/models/charge2/epoch_035.hdf5",
                 "--charge",
