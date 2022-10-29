@@ -4,7 +4,7 @@ from keras.models import Sequential
 
 try:
     from keras.layers import Conv1D, \
-        Dense, Dropout, Masking, LSTM, Bidirectional, TimeDistributed
+        Dense, Dropout, Masking, LSTM, Bidirectional, TimeDistributed, Flatten, Reshape
 except ImportError:
     from keras.layers.convolutional import Conv1D
     from keras.layers.core import Dense, Dropout, Masking
@@ -25,18 +25,9 @@ def cosine_similarity(y_true, y_pred):
 
 def build_model(options, metrics=[cosine_similarity]):
     model = Sequential()
-    model.add(Conv1D(
-        filters=64,
-        kernel_size=2,
-        activation="relu",
-        input_shape=(options.max_sequence_length, options.amino_acid_size())
-    ))
-    model.add(Masking(mask_value=0.))
-    model.add(Bidirectional(LSTM(128, return_sequences=True)))
-    model.add(Dropout(0.5))
-    model.add(TimeDistributed(
-        Dense(options.intensity_size(), activation='relu')
-    ))
+    model.add(Flatten())
+    model.add(Dense((options.max_sequence_length-1)*options.intensity_size(), activation="sigmoid"))
+    model.add(Reshape(((options.max_sequence_length-1), options.intensity_size())))
     model.compile(
         loss="mean_squared_error",
         optimizer="adam",
