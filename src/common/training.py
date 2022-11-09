@@ -3,7 +3,7 @@ from keras.callbacks import ModelCheckpoint, CSVLogger, \
 from keras.models import load_model
 import keras.backend as K
 
-from .split import split_train_validate
+from .split import split_data
 
 
 class TrainerBase:
@@ -92,12 +92,15 @@ class TrainerBase:
 
 
     def train(self, data, 
-              validate_percent=.33, seed=None,
-              **kwargs):
+              validate_percent=.20,
+              test_percent=.20,
+              seed=None, **kwargs):
         x, y = self.converter.data_to_tensor(data)
         x_train, y_train, x_validate, y_validate, \
-            train_indexs, validate_indexs = \
-            split_train_validate(
+            self.x_test, self.y_test, \
+            train_indexs, validate_indexs, \
+            test_indexs = \
+            split_data(
                 x, y,
                 validate_percent=validate_percent,
                 seed=seed
@@ -106,7 +109,8 @@ class TrainerBase:
             'validate_percent': validate_percent,
             'seed': seed,
             'train': train_indexs.tolist(),
-            'validate': validate_indexs.tolist()
+            'validate': validate_indexs.tolist(),
+            'test' : test_indexs.tolist()
         }
 
         result = self.train_with_tensor(
@@ -116,4 +120,8 @@ class TrainerBase:
 
         result['split'] = split
         return result
+
+    def test(self):
+        results = self.model.evaluate(self.x_test, self.y_test)
+        return results
 

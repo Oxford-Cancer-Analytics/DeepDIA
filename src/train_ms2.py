@@ -39,8 +39,12 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '--validate_percent', type=float, default=0.33,
+    '--validate_percent', type=float, default=0.20,
     help='percent of data for validation (default: %(default)s)'
+)
+parser.add_argument(
+    '--test_percent', type=float, default=0.20,
+    help='percent of data for testing (default: %(default)s)'
 )
 parser.add_argument(
     '--seed', type=int,
@@ -59,6 +63,7 @@ lr = args.lr
 reduce_lr_factor = args.reduce_lr_factor
 reduce_lr_patience = args.reduce_lr_patience
 validate_percent = args.validate_percent
+test_percent = args.validate_percent
 seed = args.seed
 
 # %%
@@ -153,9 +158,15 @@ if reduce_lr_patience:
 
 result = trainer.train(
     data, epochs=epochs, patience=patience,
-    validate_percent=validate_percent, seed=seed,
+    validate_percent=validate_percent,
+    test_percent=test_percent,
+    seed=seed,
     lr=lr
 )
+
+print("Evaluating on test data")
+test_results = trainer.test()
+
 result['files'] = data_files
 
 trainer.save_model(os.path.join(train_dir, 'models', 'last_epoch.hdf5'))
