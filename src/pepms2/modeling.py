@@ -1,16 +1,18 @@
 import keras.backend as K
 from keras.models import load_model as keras_load_model
 from keras.models import Sequential
+import tensorflow as tf
 
 try:
     from keras.layers import Conv1D, \
-        Dense, Dropout, Masking, LSTM, Bidirectional, TimeDistributed
+        Dense, Dropout, Masking, LSTM, Bidirectional, TimeDistributed, Flatten
 except ImportError:
     from keras.layers.convolutional import Conv1D
     from keras.layers.core import Dense, Dropout, Masking
     from keras.layers.recurrent import LSTM
     from keras.layers.wrappers import Bidirectional, TimeDistributed
 
+tf.keras.backend.set_floatx('float32')
 
 def cosine_similarity(y_true, y_pred):
     length = K.int_shape(y_pred)[1]
@@ -25,7 +27,7 @@ def cosine_similarity(y_true, y_pred):
 
 def build_model(options, metrics=[cosine_similarity]):
     model = Sequential()
-    model.add(Masking(mask_value=0.))
+    model.add(tf.keras.Input(shape=(options.max_sequence_length, options.amino_acid_size())))
     model.add(Bidirectional(LSTM(128, return_sequences=True)))
     model.add(Dropout(0.5))
     model.add(TimeDistributed(
