@@ -8,16 +8,16 @@
             "name": "Python: predict_rt.py",
             "type": "python",
             "request": "launch",
-            "program": "src/predict_ir.py",
+            "program": "src/predict_rt.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
                 "--in",
-                "data/peptide/Pan_human.peptide.csv",
+                "data/peptides/Pan_human.peptide.csv",
                 "--model",
                 "data/models/irt/epoch_082.hdf5",
                 "--out",
-                "data/Pan_human.prediction.irt.csv"
+                "data/Pan_human.prediction.irt.csv",
             ]
         },
         {
