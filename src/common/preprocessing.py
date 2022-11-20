@@ -63,12 +63,18 @@ class PeptideDataConverter:
     def peptides_to_tensor(self, sequences, modifications=None):
         if modifications is None:
             modifications = [None] * len(sequences)
-        return pad_sequences(
+        
+        sequences = pad_sequences(
             [
                 self.peptide_to_array(seq, mods)
                 for seq, mods in zip(sequences, modifications)
             ],
-            maxlen=self.options.max_sequence_length,
+            maxlen=self.options.max_sequence_length + 1,
+            padding='pre'
+        )
+        return pad_sequences(
+            sequences,
+            maxlen=self.options.max_sequence_length + 2,
             padding='post'
         )
 
