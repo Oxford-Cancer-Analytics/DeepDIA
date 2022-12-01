@@ -42,8 +42,9 @@ def build_model(options, metrics=[cosine_similarity]):
     y6_model = tf.keras.layers.Conv1D(1, kernel_size=6, activation='relu', input_shape=input_shape)(y6_model_pad)
     concat_models = tf.keras.layers.Concatenate(axis=2)([y2_model, y4_model, y6_model])
     lstm_model = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(128, return_sequences=True))(concat_models)
-    # final_layer = tf.keras.layers.Dense(options.intensity_size())(concat_models)
-    final_layer = tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(options.intensity_size()))(lstm_model)
+    dropout_1 = tf.keras.layers.Dropout(0.5)(lstm_model)
+    dense_layer = tf.keras.layers.Dense(options.intensity_size(), activation='relu')(dropout_1)
+    final_layer = tf.keras.layers.Dense(options.intensity_size(), activation='relu')(dense_layer)
     model = tf.keras.Model(inputs=model_inputs, outputs=final_layer, name="multi_kernel_option")
 
     model.compile(
