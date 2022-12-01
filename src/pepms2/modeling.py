@@ -1,10 +1,11 @@
 import keras.backend as K
 from keras.models import load_model as keras_load_model
 from keras.models import Sequential
+from keras.regularizers import l2
 
 try:
     from keras.layers import Conv1D, \
-        Dense, Dropout, Masking, LSTM, Bidirectional, TimeDistributed, Flatten, Reshape
+        Dense, Dropout, Masking, LSTM, Bidirectional, TimeDistributed, Flatten, Reshape, Activation
 except ImportError:
     from keras.layers.convolutional import Conv1D
     from keras.layers.core import Dense, Dropout, Masking
@@ -26,11 +27,12 @@ def cosine_similarity(y_true, y_pred):
 def build_model(options, metrics=[cosine_similarity]):
     model = Sequential()
     model.add(Flatten())
-    model.add(Dense((options.max_sequence_length-1)*options.intensity_size(), activation="sigmoid"))
+    model.add(Dense((options.max_sequence_length-1)*options.intensity_size(), kernel_regularizer=l2(0.01)))
     model.add(Reshape(((options.max_sequence_length-1), options.intensity_size())))
+    model.add(Activation('linear'))
     model.compile(
-        loss="mean_squared_error",
-        optimizer="adam",
+        loss='squared_hinge',
+        optimizer="adadelta",
         metrics=metrics
     )
     return model
