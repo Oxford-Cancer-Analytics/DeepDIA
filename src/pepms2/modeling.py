@@ -33,17 +33,27 @@ def build_model(options, metrics=[cosine_similarity]):
     # model.add(TimeDistributed(
     #     Dense(options.intensity_size(), activation='relu')
     # ))
+
     input_shape = (options.max_sequence_length, options.amino_acid_size())
     model_inputs = tf.keras.Input(shape=input_shape)
-    y2_model = tf.keras.layers.Conv1D(1, kernel_size=4, activation='relu', input_shape=input_shape)(model_inputs)
-    y4_model_pad = tf.keras.layers.ZeroPadding1D(padding=1)(model_inputs)
-    y4_model = tf.keras.layers.Conv1D(1, kernel_size=4, activation='relu', input_shape=input_shape)(y4_model_pad)
-    y6_model_pad = tf.keras.layers.ZeroPadding1D(padding=2)(model_inputs)
-    y6_model = tf.keras.layers.Conv1D(1, kernel_size=4, activation='relu', input_shape=input_shape)(y6_model_pad)
-    concat_models = tf.keras.layers.Concatenate(axis=2)([y2_model, y4_model, y6_model])
+
+
+    conv1_model_pad = tf.keras.layers.ZeroPadding1D(padding=0)(model_inputs)
+    conv1_model = tf.keras.layers.Conv1D(1, kernel_size=2, activation='relu', input_shape=input_shape)(conv1_model_pad)
+
+    conv2_model_pad = tf.keras.layers.ZeroPadding1D(padding=1)(model_inputs)
+    conv2_model = tf.keras.layers.Conv1D(1, kernel_size=4, activation='relu', input_shape=input_shape)(conv2_model_pad)
+
+    conv3_model_pad = tf.keras.layers.ZeroPadding1D(padding=2)(model_inputs)
+    conv3_model = tf.keras.layers.Conv1D(1, kernel_size=6, activation='relu', input_shape=input_shape)(conv3_model_pad)
+
+    concat_models = tf.keras.layers.Concatenate(axis=2)([conv1_model, conv2_model, conv3_model])
     lstm_model = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(128, return_sequences=True))(concat_models)
-    # final_layer = tf.keras.layers.Dense(options.intensity_size())(concat_models)
-    final_layer = tf.keras.layers.Dense(options.intensity_size())(lstm_model)
+    
+    dropped = tf.keras.layers.Dropout(0.5)(lstm_model)
+
+    dense1 = tf.keras.layers.Dense(options.intensity_size(), activation = "relu")(dropped)
+    final_layer = tf.keras.layers.Dense(options.intensity_size(), activation = "relu")(dense1)
     model = tf.keras.Model(inputs=model_inputs, outputs=final_layer, name="multi_kernel_option")
 
     model.compile(
