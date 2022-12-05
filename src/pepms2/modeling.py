@@ -29,9 +29,9 @@ def build_model(options, metrics=[cosine_similarity]):
     model = Sequential()
     model.add(Conv1D(
         filters=64,
-        kernel_size=2,
+        kernel_size=4,
         activation="relu",
-        input_shape=(options.max_sequence_length, options.amino_acid_size())
+        input_shape=(options.max_sequence_length + 2, options.amino_acid_size())
     ))
     model.add(Masking(mask_value=0.))
     model.add(Bidirectional(LSTM(128, return_sequences=True)))
@@ -40,13 +40,7 @@ def build_model(options, metrics=[cosine_similarity]):
         Dense(options.intensity_size(), activation='relu')
     ))
     
-    model.add(TimeDistributed(
-        Dense(options.intensity_size(), activation='relu')
-    ))
-    model.add(TimeDistributed(
-        Dense(options.intensity_size(), activation='relu')
-    ))
-    # model.add(Dense(options.intensity_size(), activation='relu'))
+    model.add(Dense(options.intensity_size(), activation='relu'))
 
     model.compile(
         loss="mean_squared_error",

@@ -68,7 +68,7 @@ class PeptideDataConverter:
                 self.peptide_to_array(seq, mods)
                 for seq, mods in zip(sequences, modifications)
             ],
-            maxlen=self.options.max_sequence_length,
+            maxlen=self.options.max_sequence_length + 2,
             padding='post'
         )
 
