@@ -39,7 +39,7 @@ def build_model(options, metrics=[cosine_similarity]):
     model.add(TimeDistributed(
         Dense(options.intensity_size(), activation='relu')
     ))
-    model.add(Dense(options.intensity_size(), activation='relu'))
+    model.add(TimeDistributed(Dense(options.intensity_size(), activation='tanh')))
 
     model.compile(
         loss="mean_squared_error",
