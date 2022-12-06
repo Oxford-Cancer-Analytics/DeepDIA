@@ -39,13 +39,13 @@ def build_model(options, metrics=[cosine_similarity]):
 
 
     conv1_model_pad = tf.keras.layers.ZeroPadding1D(padding=0)(model_inputs)
-    conv1_model = tf.keras.layers.Conv1D(1, kernel_size=2, activation='relu', input_shape=input_shape)(conv1_model_pad)
+    conv1_model = tf.keras.layers.Conv1D(64, kernel_size=2, activation='relu', input_shape=input_shape)(conv1_model_pad)
 
     conv2_model_pad = tf.keras.layers.ZeroPadding1D(padding=1)(model_inputs)
-    conv2_model = tf.keras.layers.Conv1D(1, kernel_size=4, activation='relu', input_shape=input_shape)(conv2_model_pad)
+    conv2_model = tf.keras.layers.Conv1D(64, kernel_size=4, activation='relu', input_shape=input_shape)(conv2_model_pad)
 
     conv3_model_pad = tf.keras.layers.ZeroPadding1D(padding=2)(model_inputs)
-    conv3_model = tf.keras.layers.Conv1D(1, kernel_size=6, activation='relu', input_shape=input_shape)(conv3_model_pad)
+    conv3_model = tf.keras.layers.Conv1D(64, kernel_size=6, activation='relu', input_shape=input_shape)(conv3_model_pad)
 
     concat_models = tf.keras.layers.Concatenate(axis=2)([conv1_model, conv2_model, conv3_model])
     lstm_model = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(128, return_sequences=True))(concat_models)
